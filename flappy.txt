@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Flappy Bird</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="400" height="500"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // bird variables
+    let birdX = 50;
+    let birdY = canvas.height / 2;
+    let birdSpeed = 2;
+    let gravity = 0.1;
+
+    // pipe variables
+    let pipeX = canvas.width;
+    let pipeGap = 150;
+    let pipeWidth = 50;
+    let pipeSpeed = 2;
+    let pipeHeight = canvas.height - pipeGap;
+
+    // score variables
+    let score = 0;
+
+    // key event listeners
+    document.addEventListener('keydown', jump);
+    document.addEventListener('touchstart', jump);
+
+    function jump() {
+      birdSpeed = -3;
+    }
+
+    function draw() {
+      // clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // draw bird
+      ctx.fillStyle = 'red';
+      ctx.fillRect(birdX, birdY, 30, 30);
+
+      // draw pipes
+      ctx.fillStyle = 'green';
+      ctx.fillRect(pipeX, 0, pipeWidth, pipeHeight);
+      ctx.fillRect(pipeX, pipeHeight + pipeGap, pipeWidth, canvas.height - pipeHeight - pipeGap);
+
+      // update bird position
+      birdY += birdSpeed;
+      birdSpeed += gravity;
+
+      // update pipe position
+      pipeX -= pipeSpeed;
+
+      // check for collision with pipes
+      if (birdX + 30 > pipeX && birdX < pipeX + pipeWidth) {
+        if (birdY < pipeHeight || birdY + 30 > pipeHeight + pipeGap) {
+          // game over
+          alert('Game over. Score: ' + score);
+          location.reload();
+        }
+      }
+
+      // check if bird has passed pipe
+      if (birdX > pipeX + pipeWidth && birdX < pipeX + pipeWidth + pipeSpeed) {
+        score++;
+      }
+
+      // draw score
+      ctx.font = '24px Arial';
+      ctx.fillStyle = 'black';
+      ctx.fillText('Score: ' + score, 10, 30);
+
+      // loop
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+</body>
+</html>
